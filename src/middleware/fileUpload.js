@@ -3,6 +3,7 @@ import multer, { MulterError } from "multer"
 import path from "path"
 const app = express();
 export const uploadRouter = express.Router();
+import uploadImagesToCloudinary from "../service/fileService.js"
 
 /**
  * Error handling function for the upload middleware
@@ -16,7 +17,7 @@ export const UNEXPECTED_FILE_TYPE={
 }
 
 
-function handleError(req,res,err){
+async function handleError (req,res,err){
 
     if(err){
         if(err instanceof multer.MulterError){
@@ -47,9 +48,12 @@ function handleError(req,res,err){
         size: file.size,
       }));
     
+
+      const response=await uploadImagesToCloudinary(uploadedFiles);
+
       res.status(200).json({
         message: "Files uploaded successfully.",
-        files: uploadedFiles,
+        files: response,
       });
 
 }
